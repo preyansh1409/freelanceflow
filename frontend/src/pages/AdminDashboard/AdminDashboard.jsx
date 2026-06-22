@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner';
+import Modal from '../../components/Modal/Modal';
+import ConfirmDialog from '../../components/ConfirmDialog/ConfirmDialog';
 import { 
   FiSearch, FiLogOut, FiShield, FiGrid, FiUsers, 
-  FiUser, FiCheckCircle, FiDollarSign, FiFolder, FiFileText, FiLayers 
+  FiUser, FiCheckCircle, FiDollarSign, FiFolder, FiFileText, FiLayers,
+  FiEdit, FiTrash
 } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 import { formatDate } from '../../utils/formatDate';
@@ -16,6 +19,30 @@ const AdminDashboard = () => {
   const [search, setSearch] = useState('');
   const [activeView, setActiveView] = useState('dashboard'); // 'dashboard' | 'customer'
 
+  // Modal states
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+
+  // Form states for edit
+  const [editName, setEditName] = useState('');
+  const [editEmail, setEditEmail] = useState('');
+  const [editPlan, setEditPlan] = useState('free');
+  const [editExpertise, setEditExpertise] = useState('');
+  const [editPassword, setEditPassword] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+
+  const fetchUsers = async () => {
+    try {
+      const { data } = await api.get('/admin/users');
+      setUsers(data);
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to load admin data.');
+    }
+  };
+
+
   // Check auth on mount
   useEffect(() => {
     const isAdmin = localStorage.getItem('ff_admin_auth') === 'true';
@@ -25,25 +52,78 @@ const AdminDashboard = () => {
       return;
     }
 
-    const fetchUsers = async () => {
-      try {
-        const { data } = await api.get('/admin/users');
-        setUsers(data);
-      } catch (err) {
-        toast.error('Failed to load admin data.');
-      } finally {
-        setLoading(false);
-      }
+    const fetchUsersData = async () => {
+      setLoading(true);
+      await fetchUsers();
+      setLoading(false);
     };
 
-    fetchUsers();
+    fetchUsersData();
   }, [navigate]);
+
 
   const handleLogout = () => {
     localStorage.removeItem('ff_admin_auth');
     toast.success('Logged out of Super Admin Panel.');
     navigate('/login');
   };
+
+  const handleEditClick = (user) => {
+    setSelectedUser(user);
+    setEditName(user.name || '');
+    setEditEmail(user.email || '');
+    setEditPlan(user.plan || 'free');
+    setEditExpertise(user.expertise || '');
+    setEditPassword('');
+    setIsEditModalOpen(true);
+  };
+
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    if (!editName || !editEmail) {
+      toast.error('Name and email are required.');
+      return;
+    }
+    setSubmitting(true);
+    try {
+      await api.put(`/admin/users/${selectedUser.id}`, {
+        name: editName,
+        email: editEmail,
+        plan: editPlan,
+        expertise: editExpertise,
+        password: editPassword
+      });
+      toast.success('Customer updated successfully.');
+      setIsEditModalOpen(false);
+      fetchUsers();
+    } catch (err) {
+      const errMsg = err.response?.data?.message || 'Failed to update customer.';
+      toast.error(errMsg);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleDeleteClick = (user) => {
+    setSelectedUser(user);
+    setIsDeleteOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    setSubmitting(true);
+    try {
+      await api.delete(`/admin/users/${selectedUser.id}`);
+      toast.success('Customer and all associated data deleted successfully.');
+      setIsDeleteOpen(false);
+      fetchUsers();
+    } catch (err) {
+      const errMsg = err.response?.data?.message || 'Failed to delete customer.';
+      toast.error(errMsg);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
 
   const filteredUsers = users.filter(u =>
     u.name?.toLowerCase().includes(search.toLowerCase()) ||
@@ -145,7 +225,7 @@ const AdminDashboard = () => {
         </header>
 
         {/* Content Container */}
-        <div className="p-8 max-w-7xl w-full mx-auto">
+        <div className="p-8 w-full">
           
           {/* ══════════ VIEW: DASHBOARD ══════════ */}
           {activeView === 'dashboard' && (
@@ -299,13 +379,14 @@ const AdminDashboard = () => {
                       <th className="border-r border-slate-200 px-4 py-3 text-[10px] uppercase font-bold tracking-wider text-left min-w-[130px]">Registered Date</th>
                       <th className="border-r border-slate-200 px-3 py-3 text-[10px] uppercase font-bold tracking-wider text-center w-24">Clients</th>
                       <th className="border-r border-slate-200 px-3 py-3 text-[10px] uppercase font-bold tracking-wider text-center w-24">Projects</th>
-                      <th className="px-3 py-3 text-[10px] uppercase font-bold tracking-wider text-center w-24">Invoices</th>
+                      <th className="border-r border-slate-200 px-3 py-3 text-[10px] uppercase font-bold tracking-wider text-center w-24">Invoices</th>
+                      <th className="px-3 py-3 text-[10px] uppercase font-bold tracking-wider text-center w-28">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-150">
                     {filteredUsers.length === 0 ? (
                       <tr>
-                        <td colSpan={10} className="text-center py-12 text-slate-400 italic text-xs">
+                        <td colSpan={11} className="text-center py-12 text-slate-400 italic text-xs">
                           No customer registrations match your search criteria.
                         </td>
                       </tr>
@@ -346,8 +427,26 @@ const AdminDashboard = () => {
                           <td className="border-r border-slate-150 px-3 py-3.5 text-center text-sm font-bold text-slate-800 bg-slate-50/30">
                             {user.project_count}
                           </td>
-                          <td className="px-3 py-3.5 text-center text-sm font-bold text-slate-800 bg-slate-50/30">
+                          <td className="border-r border-slate-150 px-3 py-3.5 text-center text-sm font-bold text-slate-800 bg-slate-50/30">
                             {user.invoice_count}
+                          </td>
+                          <td className="px-3 py-3.5 text-center">
+                            <div className="flex items-center justify-center gap-2">
+                              <button
+                                onClick={() => handleEditClick(user)}
+                                className="p-1.5 text-indigo-600 hover:text-indigo-900 hover:bg-indigo-50 rounded-lg transition cursor-pointer"
+                                title="Edit User"
+                              >
+                                <FiEdit size={14} />
+                              </button>
+                              <button
+                                onClick={() => handleDeleteClick(user)}
+                                className="p-1.5 text-rose-600 hover:text-rose-900 hover:bg-rose-50 rounded-lg transition cursor-pointer"
+                                title="Delete User"
+                              >
+                                <FiTrash size={14} />
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       ))
@@ -361,8 +460,99 @@ const AdminDashboard = () => {
         </div>
       </main>
 
+      {/* Edit User Modal */}
+      <Modal 
+        isOpen={isEditModalOpen} 
+        onClose={() => setIsEditModalOpen(false)} 
+        title="Edit Customer Account"
+      >
+        <form onSubmit={handleEditSubmit} className="space-y-4">
+          <div>
+            <label className="block text-xs font-bold uppercase text-slate-500 mb-1.5">Full Name</label>
+            <input 
+              type="text" 
+              value={editName}
+              onChange={e => setEditName(e.target.value)}
+              className="w-full px-3.5 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-indigo-600 bg-white font-semibold text-slate-800"
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-bold uppercase text-slate-500 mb-1.5">Email Address</label>
+            <input 
+              type="email" 
+              value={editEmail}
+              onChange={e => setEditEmail(e.target.value)}
+              className="w-full px-3.5 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-indigo-600 bg-white font-semibold text-slate-800"
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-bold uppercase text-slate-500 mb-1.5">New Password (optional)</label>
+            <input 
+              type="password" 
+              value={editPassword}
+              onChange={e => setEditPassword(e.target.value)}
+              placeholder="Leave blank to keep current"
+              className="w-full px-3.5 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-indigo-600 bg-white font-semibold text-slate-800"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-bold uppercase text-slate-500 mb-1.5">Plan Level</label>
+            <select
+              value={editPlan}
+              onChange={e => setEditPlan(e.target.value)}
+              className="w-full px-3.5 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-indigo-600 bg-white font-semibold text-slate-800"
+            >
+              <option value="free">Free Trial</option>
+              <option value="pro">Paid Pro</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-xs font-bold uppercase text-slate-500 mb-1.5">Expertise</label>
+            <input 
+              type="text" 
+              value={editExpertise}
+              onChange={e => setEditExpertise(e.target.value)}
+              placeholder="e.g. Full-Stack Dev, UX Designer"
+              className="w-full px-3.5 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-indigo-600 bg-white font-semibold text-slate-800"
+            />
+          </div>
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
+            <button
+              type="button"
+              onClick={() => setIsEditModalOpen(false)}
+              className="px-4 py-2 border border-slate-200 hover:bg-slate-50 text-slate-600 font-bold text-xs rounded-xl transition cursor-pointer"
+              disabled={submitting}
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow transition cursor-pointer"
+              disabled={submitting}
+            >
+              {submitting ? 'Saving...' : 'Save Changes'}
+            </button>
+          </div>
+        </form>
+      </Modal>
+
+      {/* Delete Confirmation Dialog */}
+      <ConfirmDialog
+        isOpen={isDeleteOpen}
+        title="Delete Customer Account"
+        message={`Are you sure you want to delete ${selectedUser?.name || 'this customer'}? All clients, projects, invoices, and other associated platform data will be permanently removed. This action cannot be undone.`}
+        confirmText={submitting ? 'Deleting...' : 'Permanently Delete'}
+        cancelText="Cancel"
+        onConfirm={handleDeleteConfirm}
+        onCancel={() => setIsDeleteOpen(false)}
+        isDanger={true}
+      />
+
     </div>
   );
 };
 
 export default AdminDashboard;
+
