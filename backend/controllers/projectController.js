@@ -19,7 +19,7 @@ const getAllProjects = async (req, res, next) => {
     if (status)    { query += ' AND p.status = ?';    params.push(status); }
     if (client_id) { query += ' AND p.client_id = ?'; params.push(client_id); }
 
-    query += ' GROUP BY p.id ORDER BY p.created_at DESC';
+    query += ' GROUP BY p.id, c.id ORDER BY p.created_at DESC';
 
     const [projects] = await db.query(query, params);
 
