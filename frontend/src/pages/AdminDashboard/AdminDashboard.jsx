@@ -430,17 +430,17 @@ const AdminDashboard = () => {
                             {user.invoice_count}
                           </td>
                           <td className="px-3 py-3.5 text-center">
-                            <div className="flex items-center justify-center gap-3">
+                            <div className="flex items-center justify-center gap-2.5">
                               <button
                                 onClick={() => handleEditClick(user)}
-                                className="text-xs font-bold text-indigo-600 hover:text-indigo-850 hover:underline transition cursor-pointer"
+                                className="px-3 py-1.5 bg-indigo-50 hover:bg-indigo-600 text-indigo-700 hover:text-white rounded-lg font-bold text-xs border border-indigo-200 transition-all duration-150 cursor-pointer shadow-sm active:scale-95"
                                 title="Edit User"
                               >
                                 Edit
                               </button>
                               <button
                                 onClick={() => handleDeleteClick(user)}
-                                className="text-xs font-bold text-rose-600 hover:text-rose-850 hover:underline transition cursor-pointer"
+                                className="px-3 py-1.5 bg-rose-50 hover:bg-rose-600 text-rose-700 hover:text-white rounded-lg font-bold text-xs border border-rose-200 transition-all duration-150 cursor-pointer shadow-sm active:scale-95"
                                 title="Delete User"
                               >
                                 Delete
