@@ -235,3 +235,60 @@ A full-screen responsive table displaying granular information:
    npm run dev
    ```
 5. Open your browser and navigate to the local URL (e.g. `http://localhost:5173`) to view FreelanceFlow.
+
+---
+
+## 8. Vercel Cloud Hosting Setup (Production Deployment)
+
+This section outlines how to deploy FreelanceFlow onto **Vercel** (Hobby Free Plan) and connect it to a cloud **TiDB Serverless** database to run 24/7 without needing local servers.
+
+### A. Codebase Changes Made for Cloud Hosting
+
+To enable Serverless execution and routing under the Vercel Hobby plan, the following files were added/modified:
+1. **`backend/vercel.json` [NEW]**: Configures your Express API server to deploy as a Vercel Serverless Function using the `@vercel/node` runtime.
+2. **`frontend/vercel.json` [NEW]**: Configures URL routing rewrites so that React Router paths (e.g., `/dashboard`, `/login`) resolve correctly to `index.html` without causing `404 Not Found` errors.
+3. **`backend/server.js` [MODIFY]**: Updated the CORS configuration to dynamically authorize connections from `localhost`, your Vercel frontend deployment domains (`*.vercel.app`), and optional custom domains via `FRONTEND_URL`.
+4. **`backend/controllers/projectController.js` [MODIFY]**: Restructured standard SQL `GROUP BY` queries in `getAllProjects` to conform strictly to MySQL's `only_full_group_by` constraints enforced by TiDB Serverless.
+
+---
+
+### B. Deployment Steps
+
+#### Step 1: Gather TiDB Cloud Database Credentials
+1. Create a free cluster on [TiDB Cloud](https://tidbcloud.com/).
+2. Click **Connect** on your cluster dashboard and note the parameters:
+   - **Host** (e.g. `gateway01.ap-southeast-1.prod.alicloud.tidbcloud.com`)
+   - **Port** (usually `4000`)
+   - **Username** (e.g. `2RUqtc89U2iPKw1.root`)
+   - **Password**
+   - **Database Name** (e.g. `freelanceflow`)
+
+#### Step 2: Deploy the Backend API on Vercel
+1. Go to your **Vercel Dashboard** ➜ click **Add New...** ➜ **Project**.
+2. Select your `freelanceflow` GitHub repository and click **Import**.
+3. Under **Configure Project**:
+   - Set the **Project Name** to `freelanceflow-backend`.
+   - Set **Application Preset** to `Node`.
+   - Click **Edit** next to **Root Directory**, select the **`backend`** folder, and click **Continue**.
+4. Expand **Environment Variables** and add the following keys:
+   - `DB_HOST` = *your_tidb_host*
+   - `DB_PORT` = `4000`
+   - `DB_USER` = *your_tidb_username*
+   - `DB_PASSWORD` = *your_tidb_password*
+   - `DB_NAME` = `freelanceflow`
+   - `JWT_SECRET` = *your_secret_hash*
+5. Click **Deploy**. Vercel will launch your backend serverless API. Copy the generated Domain URL (e.g. `https://freelanceflow-bcbd.vercel.app`).
+
+#### Step 3: Deploy the Frontend App on Vercel
+1. Go to your **Vercel Dashboard** ➜ click **Add New...** ➜ **Project**.
+2. Import the same `freelanceflow` repository.
+3. Under **Configure Project**:
+   - Set the **Project Name** to `freelanceflow-frontend` (or similar).
+   - Click **Edit** next to **Root Directory**, select the **`frontend`** folder, and click **Continue**.
+4. Expand **Environment Variables** and add:
+   - **Key**: `VITE_API_URL`
+   - **Value**: `https://<your-backend-domain>.vercel.app/api` (the backend URL you copied from Step 2, appending `/api` at the end).
+5. Click **Deploy**.
+
+*Note: If you ever change the backend Vercel URL or update variables, remember to go to your frontend Vercel project Settings, update `VITE_API_URL`, and click **Redeploy** on your latest build.*
+
