@@ -324,20 +324,6 @@ const AdminDashboard = () => {
 
               </div>
 
-              {/* Informative Help Banner */}
-              <div className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-2xl p-8 shadow-md">
-                <h3 className="text-lg font-black tracking-tight">Need granular customer data?</h3>
-                <p className="text-sm text-indigo-100 mt-1 max-w-2xl">
-                  Switch to the **Customer Directory** view using the left sidebar menu to see full registrations, including login emails, user passwords (hashed), client counts, and creation dates.
-                </p>
-                <button
-                  onClick={() => setActiveView('customer')}
-                  className="mt-4 px-4 py-2 bg-white text-indigo-700 font-bold text-xs rounded-xl shadow hover:bg-indigo-50 transition cursor-pointer"
-                >
-                  Open Customer Table
-                </button>
-              </div>
-
             </div>
           )}
 
