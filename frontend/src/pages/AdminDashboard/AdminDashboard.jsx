@@ -6,8 +6,7 @@ import Modal from '../../components/Modal/Modal';
 import ConfirmDialog from '../../components/ConfirmDialog/ConfirmDialog';
 import { 
   FiSearch, FiLogOut, FiShield, FiGrid, FiUsers, 
-  FiUser, FiCheckCircle, FiDollarSign, FiFolder, FiFileText, FiLayers,
-  FiEdit, FiTrash
+  FiUser, FiCheckCircle, FiDollarSign, FiFolder, FiFileText, FiLayers
 } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 import { formatDate } from '../../utils/formatDate';
@@ -369,21 +368,21 @@ const AdminDashboard = () => {
               <div className="overflow-x-auto">
                 <table className="w-full border-collapse">
                   <thead>
-                    <tr className="bg-slate-100 border-b border-slate-200 text-slate-700">
-                      <th className="border-r border-slate-200 px-3 py-3 text-[10px] uppercase font-bold tracking-wider text-center w-14">#</th>
-                      <th className="border-r border-slate-200 px-4 py-3 text-[10px] uppercase font-bold tracking-wider text-left min-w-[150px]">Customer Name</th>
-                      <th className="border-r border-slate-200 px-4 py-3 text-[10px] uppercase font-bold tracking-wider text-left min-w-[200px]">Email Address</th>
-                      <th className="border-r border-slate-200 px-4 py-3 text-[10px] uppercase font-bold tracking-wider text-left min-w-[220px]">Password (Hashed)</th>
-                      <th className="border-r border-slate-200 px-4 py-3 text-[10px] uppercase font-bold tracking-wider text-center w-28">Plan status</th>
-                      <th className="border-r border-slate-200 px-4 py-3 text-[10px] uppercase font-bold tracking-wider text-left min-w-[150px]">Expertise</th>
-                      <th className="border-r border-slate-200 px-4 py-3 text-[10px] uppercase font-bold tracking-wider text-left min-w-[130px]">Registered Date</th>
-                      <th className="border-r border-slate-200 px-3 py-3 text-[10px] uppercase font-bold tracking-wider text-center w-24">Clients</th>
-                      <th className="border-r border-slate-200 px-3 py-3 text-[10px] uppercase font-bold tracking-wider text-center w-24">Projects</th>
-                      <th className="border-r border-slate-200 px-3 py-3 text-[10px] uppercase font-bold tracking-wider text-center w-24">Invoices</th>
-                      <th className="px-3 py-3 text-[10px] uppercase font-bold tracking-wider text-center w-28">Actions</th>
+                    <tr className="bg-slate-100 border-b-2 border-slate-400 text-slate-955 font-black">
+                      <th className="border-r border-slate-400 px-3 py-3 text-[11px] uppercase font-black tracking-wider text-center w-14">#</th>
+                      <th className="border-r border-slate-400 px-4 py-3 text-[11px] uppercase font-black tracking-wider text-left min-w-[150px]">Customer Name</th>
+                      <th className="border-r border-slate-400 px-4 py-3 text-[11px] uppercase font-black tracking-wider text-left min-w-[200px]">Email Address</th>
+                      <th className="border-r border-slate-400 px-4 py-3 text-[11px] uppercase font-black tracking-wider text-left min-w-[220px]">Password (Hashed)</th>
+                      <th className="border-r border-slate-400 px-4 py-3 text-[11px] uppercase font-black tracking-wider text-center w-28">Plan status</th>
+                      <th className="border-r border-slate-400 px-4 py-3 text-[11px] uppercase font-black tracking-wider text-left min-w-[150px]">Expertise</th>
+                      <th className="border-r border-slate-400 px-4 py-3 text-[11px] uppercase font-black tracking-wider text-left min-w-[130px]">Registered Date</th>
+                      <th className="border-r border-slate-400 px-3 py-3 text-[11px] uppercase font-black tracking-wider text-center w-24">Clients</th>
+                      <th className="border-r border-slate-400 px-3 py-3 text-[11px] uppercase font-black tracking-wider text-center w-24">Projects</th>
+                      <th className="border-r border-slate-400 px-3 py-3 text-[11px] uppercase font-black tracking-wider text-center w-24">Invoices</th>
+                      <th className="px-3 py-3 text-[11px] uppercase font-black tracking-wider text-center w-28">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-150">
+                  <tbody className="divide-y divide-slate-300">
                     {filteredUsers.length === 0 ? (
                       <tr>
                         <td colSpan={11} className="text-center py-12 text-slate-400 italic text-xs">
@@ -392,20 +391,20 @@ const AdminDashboard = () => {
                       </tr>
                     ) : (
                       filteredUsers.map((user, idx) => (
-                        <tr key={user.id} className="hover:bg-slate-50/50 transition-colors">
-                          <td className="border-r border-slate-150 px-3 py-3.5 text-center bg-slate-50/60 font-black text-slate-500 text-xs">
+                        <tr key={user.id} className="hover:bg-slate-50/50 transition-colors border-b border-slate-300">
+                          <td className="border-r border-slate-300 px-3 py-3.5 text-center bg-slate-50/60 font-black text-slate-500 text-xs">
                             {idx + 1}
                           </td>
-                          <td className="border-r border-slate-150 px-4 py-3.5 text-sm font-bold text-slate-800">
+                          <td className="border-r border-slate-300 px-4 py-3.5 text-sm font-bold text-slate-800">
                             {user.name}
                           </td>
-                          <td className="border-r border-slate-150 px-4 py-3.5 text-sm font-semibold text-slate-600 font-mono">
+                          <td className="border-r border-slate-300 px-4 py-3.5 text-sm font-semibold text-slate-600 font-mono">
                             {user.email}
                           </td>
-                          <td className="border-r border-slate-150 px-4 py-3.5 text-[11px] font-mono text-slate-400 break-all select-all" title={user.password}>
+                          <td className="border-r border-slate-300 px-4 py-3.5 text-[11px] font-mono text-slate-400 break-all select-all" title={user.password}>
                             {user.password || 'N/A'}
                           </td>
-                          <td className="border-r border-slate-150 px-4 py-3.5 text-center">
+                          <td className="border-r border-slate-300 px-4 py-3.5 text-center">
                             <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold border ${
                               user.plan === 'pro'
                                 ? 'bg-emerald-50 text-emerald-700 border-emerald-200 shadow-sm shadow-emerald-500/5'
@@ -415,36 +414,36 @@ const AdminDashboard = () => {
                               {user.plan === 'pro' ? 'Paid Pro' : 'Free Trial'}
                             </span>
                           </td>
-                          <td className="border-r border-slate-150 px-4 py-3.5 text-sm font-medium text-slate-600 italic">
+                          <td className="border-r border-slate-300 px-4 py-3.5 text-sm font-medium text-slate-600 italic">
                             {user.expertise || 'N/A'}
                           </td>
-                          <td className="border-r border-slate-150 px-4 py-3.5 text-sm font-semibold text-slate-600 font-mono">
+                          <td className="border-r border-slate-300 px-4 py-3.5 text-sm font-semibold text-slate-600 font-mono">
                             {formatDate(user.created_at)}
                           </td>
-                          <td className="border-r border-slate-150 px-3 py-3.5 text-center text-sm font-bold text-slate-800 bg-slate-50/30">
+                          <td className="border-r border-slate-300 px-3 py-3.5 text-center text-sm font-bold text-slate-800 bg-slate-50/30">
                             {user.client_count}
                           </td>
-                          <td className="border-r border-slate-150 px-3 py-3.5 text-center text-sm font-bold text-slate-800 bg-slate-50/30">
+                          <td className="border-r border-slate-300 px-3 py-3.5 text-center text-sm font-bold text-slate-800 bg-slate-50/30">
                             {user.project_count}
                           </td>
-                          <td className="border-r border-slate-150 px-3 py-3.5 text-center text-sm font-bold text-slate-800 bg-slate-50/30">
+                          <td className="border-r border-slate-300 px-3 py-3.5 text-center text-sm font-bold text-slate-800 bg-slate-50/30">
                             {user.invoice_count}
                           </td>
                           <td className="px-3 py-3.5 text-center">
-                            <div className="flex items-center justify-center gap-2">
+                            <div className="flex items-center justify-center gap-3">
                               <button
                                 onClick={() => handleEditClick(user)}
-                                className="p-1.5 text-indigo-600 hover:text-indigo-900 hover:bg-indigo-50 rounded-lg transition cursor-pointer"
+                                className="text-xs font-bold text-indigo-600 hover:text-indigo-850 hover:underline transition cursor-pointer"
                                 title="Edit User"
                               >
-                                <FiEdit size={14} />
+                                Edit
                               </button>
                               <button
                                 onClick={() => handleDeleteClick(user)}
-                                className="p-1.5 text-rose-600 hover:text-rose-900 hover:bg-rose-50 rounded-lg transition cursor-pointer"
+                                className="text-xs font-bold text-rose-600 hover:text-rose-850 hover:underline transition cursor-pointer"
                                 title="Delete User"
                               >
-                                <FiTrash size={14} />
+                                Delete
                               </button>
                             </div>
                           </td>
