@@ -372,7 +372,7 @@ const AdminDashboard = () => {
                       <th className="border-r border-slate-400 px-3 py-3 text-[11px] uppercase font-black tracking-wider text-center w-14">#</th>
                       <th className="border-r border-slate-400 px-4 py-3 text-[11px] uppercase font-black tracking-wider text-left min-w-[150px]">Customer Name</th>
                       <th className="border-r border-slate-400 px-4 py-3 text-[11px] uppercase font-black tracking-wider text-left min-w-[200px]">Email Address</th>
-                      <th className="border-r border-slate-400 px-4 py-3 text-[11px] uppercase font-black tracking-wider text-left min-w-[220px]">Password (Hashed)</th>
+                      <th className="border-r border-slate-400 px-4 py-3 text-[11px] uppercase font-black tracking-wider text-left w-[140px] min-w-[140px]">Password (Hashed)</th>
                       <th className="border-r border-slate-400 px-4 py-3 text-[11px] uppercase font-black tracking-wider text-center w-28">Plan status</th>
                       <th className="border-r border-slate-400 px-4 py-3 text-[11px] uppercase font-black tracking-wider text-left min-w-[150px]">Expertise</th>
                       <th className="border-r border-slate-400 px-4 py-3 text-[11px] uppercase font-black tracking-wider text-left min-w-[130px]">Registered Date</th>
@@ -401,8 +401,10 @@ const AdminDashboard = () => {
                           <td className="border-r border-slate-300 px-4 py-3.5 text-sm font-semibold text-slate-600 font-mono">
                             {user.email}
                           </td>
-                          <td className="border-r border-slate-300 px-4 py-3.5 text-[11px] font-mono text-slate-400 break-all select-all" title={user.password}>
-                            {user.password || 'N/A'}
+                          <td className="border-r border-slate-300 px-4 py-3.5" title={user.password}>
+                            <div className="w-[120px] truncate text-[10px] font-mono text-slate-400 select-all">
+                              {user.password || 'N/A'}
+                            </div>
                           </td>
                           <td className="border-r border-slate-300 px-4 py-3.5 text-center">
                             <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold border ${
